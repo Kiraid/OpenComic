@@ -73,7 +73,8 @@ scope.onmessage = async function(event: MessageEvent) {
 			rec = await ort.InferenceSession.create(new Uint8Array(message.rec), options);
 
 			// CTC classes: blank, the dictionary, then a space
-			characters = ['', ...message.dict.split('\n'), ' '];
+			// (\r?: a CRLF checkout would otherwise put a \r after every character)
+			characters = ['', ...message.dict.split(/\r?\n/), ' '];
 			scope.postMessage({type: 'ready'});
 		}
 		else if(message.type === 'page')
