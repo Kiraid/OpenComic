@@ -10,6 +10,10 @@
 			<div class="title-medium gamepad-item{{#compare settingsTab '==' 'shortcuts'}} active{{/compare}}" data-name="shortcuts" data-on-end-animation="gamepad.updateBrowsableItems(gamepad.currentKey())">
 				<span class="material-icon">keyboard</span>{{language.settings.shortcuts.main}}
 			</div>
+
+			<div class="title-medium gamepad-item{{#compare settingsTab '==' 'readAlong'}} active{{/compare}}" data-name="readAlong" data-on-end-animation="gamepad.updateBrowsableItems(gamepad.currentKey())">
+				<span class="material-icon">record_voice_over</span>{{language.settings.readAlong.main}}
+			</div>
 		</div>
 	</div>
 
@@ -745,6 +749,10 @@
 			<div class="settings-tap-zones-table">
 
 			</div>
+		</div>
+
+		<div class="tabs-readAlong{{#compare settingsTab '==' 'readAlong'}} active{{/compare}}">
+			<div class="settings-read-along"></div>
 		</div>
 	</div>
 </div>

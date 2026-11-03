@@ -11,6 +11,8 @@ const render = require(p.join(appDir, '.dist/reading/render.js')),
 	doublePage = require(p.join(appDir, '.dist/reading/double-page.js')),
 	view = require(p.join(appDir, '.dist/reading/view.mjs')).default,
 	panels = require(p.join(appDir, '.dist/reading/panels.mjs')).default,
+	readAlong = require(p.join(appDir, '.dist/reading/read-along.mjs')).default,
+	readAlongOcr = require(p.join(appDir, '.dist/reading/read-along-ocr.mjs')).default,
 	animate = require(p.join(appDir, '.dist/animate.mjs')).default;
 
 
@@ -110,6 +112,7 @@ function goToImageCL(index, animation = true, fromScroll = false, onlyMoveScroll
 		render.focusIndex(index, doublePage.active());
 		filters.focusIndex(index);
 		music.focusIndex();
+		readAlong.focusIndex(index);
 		panels.focusPage(index, fromScroll); // Use index as page
 		shortcuts.calcEventFromPoint(false);
 	}
@@ -5945,6 +5948,8 @@ module.exports = {
 	contextMenu: contextMenu,
 	pageTransitions: pageTransitions,
 	panels: panels,
+	readAlong: readAlong,
+	readAlongOcr: readAlongOcr,
 	render: render,
 	sidebar: sidebar,
 	discord: discord,

@@ -142,7 +142,8 @@ function clickTapZone(event, button)
 	if(reading.ebookHasSelection)
 		return false;
 
-	const sfxElement = (event.target.closest('oc-sfx') || event.target.tagName.toLowerCase() === 'oc-sfx') ? true : false;
+	// Sound effect hotspots, read-along bubbles and the read-along bar handle their own clicks
+	const sfxElement = event.target.closest('oc-sfx, oc-read-along, .read-along-controls') ? true : false;
 
 	if(sfxElement)
 		return false;
@@ -1518,7 +1519,7 @@ function loadShortcuts()
 						middleClick: 'resetZoom',
 					},
 					center: {
-						leftClick: 'resetZoom',
+						leftClick: 'disabled', // Tapping the page shouldn't resize it (was resetZoom / original size)
 						rightClick: 'contextMenu',
 						middleClick: 'resetZoom',
 					},
@@ -1535,7 +1536,7 @@ function loadShortcuts()
 						middleClick: 'resetZoom',
 					},
 					center: {
-						leftClick: 'resetZoom',
+						leftClick: 'disabled', // Tapping the page shouldn't resize it (was resetZoom / original size)
 						rightClick: 'contextMenu',
 						middleClick: 'resetZoom',
 					},
@@ -1552,7 +1553,7 @@ function loadShortcuts()
 						middleClick: 'resetZoom',
 					},
 					center: {
-						leftClick: 'resetZoom',
+						leftClick: 'disabled', // Tapping the page shouldn't resize it (was resetZoom / original size)
 						rightClick: 'contextMenu',
 						middleClick: 'resetZoom',
 					},

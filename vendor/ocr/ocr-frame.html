@@ -1,0 +1,10 @@
+<!doctype html>
+<!--
+	Realm for OpenComic's read-along OCR workers. Loaded in a hidden iframe:
+	sub-frames (and workers they start) get no Node integration, so
+	onnxruntime-web runs with its browser WASM backend.
+-->
+<meta charset="utf-8">
+<script>
+	parent.postMessage({ocrFrameReady: true}, '*');
+</script>

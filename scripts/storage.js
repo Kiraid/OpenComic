@@ -301,6 +301,7 @@ const storageDefault = {
 		middleClickAutoScrollInAllTapZones: false,
 		middleClickAutoScrollInCenterTapZone: true,
 		invertTapZonesInManga: true,
+		defaultTypeLabels: false, // The Manga and Comic labels were added once
 		saveImageTemplate: '[parentFolder] - [folder] - [image] - [page]',
 		saveImageFolder: relative.path(getDownloadsPath()),
 		saveImageLastFolder: '',
@@ -1030,10 +1031,33 @@ async function start(callback)
 		}
 	}
 
+	addDefaultTypeLabels();
 	callback();
 
 	await app.sleep(500);
 	backup.save();
+}
+
+// Manga and Comic labels come preset (once: deleting them later sticks). Label a folder and
+// everything in it gets that type, shown in the window title while reading.
+function addDefaultTypeLabels()
+{
+	if(storageJson.config.defaultTypeLabels)
+		return;
+
+	const labels = (storageJson.labels || []).filter(Boolean);
+
+	for(const label of ['Manga', 'Comic'])
+	{
+		if(!labels.some(name => name.toLowerCase() === label.toLowerCase()))
+			labels.push(label);
+	}
+
+	storageJson.labels = labels;
+	storageJson.config.defaultTypeLabels = true;
+
+	driver.write('labels', labels, true);
+	driver.write('config', storageJson.config, true);
 }
 
 function _config()

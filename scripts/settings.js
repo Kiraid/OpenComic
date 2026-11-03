@@ -1,4 +1,5 @@
 const macros = require(p.join(appDir, '.dist/settings/macros.mjs')).default;
+const readAlong = require(p.join(appDir, '.dist/settings/read-along.mjs')).default;
 
 function start()
 {
@@ -31,6 +32,8 @@ function startSecond()
 	getStorageSize();
 
 	events.events();
+
+	readAlong.start();
 }
 
 async function getStorageSize()
@@ -1781,4 +1784,5 @@ module.exports = {
 	getTmpFolder,
 	getCacheFolder,
 	macros,
+	readAlong,
 };

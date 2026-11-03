@@ -28,6 +28,36 @@
 	padding: 16px 16px 0px 16px;
 }
 
+.box-title-toggle
+{
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	cursor: pointer;
+	user-select: none;
+}
+
+.box-title-toggle .box-toggle
+{
+	font-size: 20px;
+	opacity: 0.7;
+}
+
+.boxes .box.collapsed
+{
+	height: auto;
+}
+
+.boxes .box.collapsed .box-title
+{
+	padding-bottom: 14px;
+}
+
+.boxes .box.collapsed .box-content
+{
+	display: none;
+}
+
 .box-content
 {
 	width: calc(100% - 12px);

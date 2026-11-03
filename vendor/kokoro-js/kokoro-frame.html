@@ -1,0 +1,11 @@
+<!doctype html>
+<!--
+	Realm for OpenComic's read-along voices. Loaded in a hidden iframe:
+	sub-frames (and workers they start) get no Node integration, so
+	kokoro-worker.js runs transformers.js / onnxruntime-web with their
+	browser backends (WASM / WebGPU).
+-->
+<meta charset="utf-8">
+<script>
+	parent.postMessage({kokoroFrameReady: true}, '*');
+</script>

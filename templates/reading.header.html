@@ -45,6 +45,13 @@
 		<div class="bar-buttons-separator seperator-music"></div>
 		<div class="material-icon button button2 button-reading-music hover-text" hover-text="{{language.reading.music.main}}" onclick="reading.music.loadMenu(); events.activeMenu('#reading-music', '.bar-right-buttons .button-reading-music', 'right');">queue_music{{!-- {{#if config.readingMusic.play}}music_note{{else}}music_off{{/if}}--}}</div>
 		{{/if}}
+		{{#if hasReadAlong}}
+		<div class="bar-buttons-separator seperator-read-along"></div>
+		<div class="material-icon button button2 button-reading-read-along hover-text{{#if readAlongOn}} fill{{/if}}" hover-text="{{#if readAlongOn}}{{language.reading.readAlong.turnOff}}{{else}}{{language.reading.readAlong.main}}{{/if}}" onclick="reading.readAlong.toggleMode();">record_voice_over</div>
+		{{else}}{{#if canMakeReadAlong}}
+		<div class="bar-buttons-separator seperator-read-along"></div>
+		<div class="material-icon button button2 button-reading-read-along hover-text" hover-text="{{language.reading.readAlong.make}}" onclick="reading.readAlongOcr.dialogCurrent();">record_voice_over</div>
+		{{/if}}{{/if}}
 		<div class="bar-buttons-separator seperator-night-mode"></div>
 		<div class="material-icon button button2 button-night-mode hover-text" hover-text="{{language.global.nightMode}}" onclick="dom.nightMode(); reading.ebook.updateAppTheme();">{{#if config.nightMode}}dark_mode{{else}}light_mode{{/if}}</div>
 

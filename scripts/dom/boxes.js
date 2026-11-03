@@ -43,6 +43,8 @@ async function box(_comics, single, title, order, orderKey = false, orderKey2 = 
 		boxes: true,
 		size: 100,
 		comics: comics,
+		library: true,
+		collapsed: collapsed(),
 	};
 
 	if(len > 1 || (single && len > 0))
@@ -64,8 +66,42 @@ function reset()
 	handlebarsContext.boxes = [];
 }
 
+// Continue reading / Recently added fold down to their titles (folded by default)
+function collapsed()
+{
+	try
+	{
+		return localStorage.getItem('libraryBoxesCollapsed') !== 'false';
+	}
+	catch
+	{
+		return true;
+	}
+}
+
+function toggle()
+{
+	const collapse = !collapsed();
+
+	try
+	{
+		localStorage.setItem('libraryBoxesCollapsed', collapse ? 'true' : 'false');
+	}
+	catch
+	{
+		// Storage unavailable: folds for this session only
+	}
+
+	for(const box of document.querySelectorAll('.boxes .library-box'))
+	{
+		box.classList.toggle('collapsed', collapse);
+		box.querySelector('.box-toggle').textContent = collapse ? 'expand_more' : 'expand_less';
+	}
+}
+
 module.exports = {
 	continueReading: continueReading,
 	recentlyAdded: recentlyAdded,
 	reset: reset,
+	toggle: toggle,
 };

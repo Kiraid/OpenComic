@@ -200,6 +200,18 @@ function setWindowTitle(title = `OpenComic${nightly.build ? ' Nightly' : ''}`)
 	_title.innerText = title;
 }
 
+// While reading: "Berserk v41 [Manga] - OpenComic". Programs that read window titles (like
+// Media Tracker) get the comic's file name, which holds the series and number (the metadata title
+// is often just "Volume 1"), and, when it or a folder above it is labelled Manga or Comic, its
+// type; parsers that ignore [tags] still get the plain name.
+function readingWindowTitle(path)
+{
+	const name = compatible.compressed(path) ? p.basename(path, p.extname(path)) : p.basename(path);
+	const type = labels.type(path);
+
+	return `${name}${type ? ' ['+type+']' : ''} - OpenComic${nightly.build ? ' Nightly' : ''}`;
+}
+
 function translatePageName(name)
 {
 	name = name.replace(/^[0-9]+\_sortonly - /, '');
@@ -662,6 +674,7 @@ async function loadIndexPage(animation = true, path = false, content = false, ke
 
 	scroll.reset();
 	reading.music.destroy();
+	reading.readAlong.destroy();
 
 	setWindowTitle();
 
@@ -1483,7 +1496,7 @@ function headerPath(path, mainPath, windowTitle = false)
 	if(windowTitle && len > 0)
 	{
 		let firstCompressedFile = fileManager.firstCompressedFile(_path);
-		setWindowTitle(dom.metadataPathName({path: firstCompressedFile, name: p.basename(firstCompressedFile)}, true));
+		setWindowTitle(readingWindowTitle(firstCompressedFile));
 	}
 
 	handlebarsContext.headerTitlePath = path;
@@ -2835,6 +2848,22 @@ async function comicContextMenu(path, mainPath, fromIndex = true, fromIndexNotMa
 	fileInfo.setAttribute('onclick', 'dom.fileInfo.show(\''+escapeQuotes(escapeBackSlash(path), 'simples')+'\');');
 	fileInfo.style.display = folder ? 'block' : 'none';
 
+	// Read-along: one comic (archive, or a folder of pages), or every comic in a folder
+	let readAlong = document.querySelector('#index-context-menu .context-menu-read-along');
+
+	if(folder && reading.readAlongOcr.supported(path))
+	{
+		const oneComic = compatible.compressed(path) || reading.readAlongOcr.hasPages(path);
+
+		readAlong.style.display = 'block';
+		readAlong.querySelector('span').textContent = oneComic ? language.reading.readAlong.make : language.reading.readAlong.makeFolder;
+		readAlong.setAttribute('onclick', 'reading.readAlongOcr.'+(oneComic ? 'dialog([' : 'dialogFolder(')+'\''+escapeQuotes(escapeBackSlash(path), 'simples')+'\''+(oneComic ? '])' : ')')+';');
+	}
+	else
+	{
+		readAlong.style.display = 'none';
+	}
+
 	if(/app\.asar\.unpacked/.test(path)) // Is the Pepper & Carrot example comic
 	{
 		let addPoster = document.querySelector('#index-context-menu .context-menu-add-poster');
@@ -3032,6 +3061,11 @@ async function openComic(animation = true, path = true, mainPath = true, end = f
 
 	let hasMusic = await reading.music.has(files, path);
 	handlebarsContext.hasMusic = hasMusic;
+
+	const readAlongPath = fileManager.lastCompressedFile(path) || path;
+	handlebarsContext.hasReadAlong = reading.readAlong.has(readAlongPath);
+	handlebarsContext.readAlongOn = reading.readAlong.enabled();
+	handlebarsContext.canMakeReadAlong = reading.readAlongOcr.supported(readAlongPath);
 
 	files = fileManager.filtered(files);
 
@@ -3232,6 +3266,7 @@ async function openComic(animation = true, path = true, mainPath = true, end = f
 	reading.read(path, indexStart, end, isPdf, isEbook, imagePath);
 	// reading.hideContent(isFullScreen, true);
 	reading.music.read(hasMusic, files);
+	reading.readAlong.load(readAlongPath);
 
 	generateAppMenu();
 	

@@ -871,6 +871,23 @@ function has(path, parents = false)
 	return false;
 }
 
+// The comic's type from the Manga / Comic labels on it or on any folder above it, nearest first
+function type(path)
+{
+	const comicLabels = relative.get('comicLabels');
+
+	for(let current = path; ; current = p.dirname(current))
+	{
+		const found = (comicLabels[current] || []).find(label => /^(manga|comic)$/i.test(label));
+
+		if(found)
+			return found.toLowerCase() === 'manga' ? 'Manga' : 'Comic';
+
+		if(p.dirname(current) === current)
+			return false;
+	}
+}
+
 function haveLabel(paths, requireAll = true)
 {
 	if(typeof paths === 'string')
@@ -1084,6 +1101,7 @@ module.exports = {
 	deleteLabel,
 	deleteFromSortAndView,
 	has,
+	type,
 	haveLabel,
 	haveFavorite,
 	menuItemSelector,

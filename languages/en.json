@@ -274,6 +274,12 @@
 			"volumes": "Volumes",
 			"volume": "Volume"
 		},
+		"readAlong": {
+			"main": "Read along",
+			"turnOff": "Turn off read along",
+			"make": "Make read-along",
+			"makeFolder": "Make read-along for all comics here"
+		},
 		"music": {
 			"main": "Music",
 			"volume": "Volume",
@@ -489,6 +495,9 @@
 			"description": "With macros, you can trigger multiple actions with a single shortcut, including delays between actions",
 			"deleteMacro": "Delete macro",
 			"confirmDelete": "Are you sure you want to delete this macro?"
+		},
+		"readAlong": {
+			"main": "Read-along"
 		},
 		"shortcuts": {
 			"main": "Shortcuts",
