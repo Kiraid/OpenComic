@@ -15,8 +15,9 @@ speed, voice, sound effects; keys R, J, K).
 | `Comic.cbz` | `Comic.cbz.readalong.json` |
 | `Comic folder\` | `Comic folder\readalong.json` |
 
-Pages are keyed by image file name, so a sidecar made on one machine works on
-another: copy it next to the same comic.
+Pages are keyed by their path inside the comic (`09.jpg`, or `001/09.jpg` for
+chapter folders), so a sidecar made on one machine works on another: copy it
+next to the same comic.
 
 ## Setup
 

@@ -171,6 +171,23 @@ function toggleMode(): void
 	}
 }
 
+// Sidecar keys are paths inside the comic ("001/09.jpg"); top-level pages,
+// and sidecars made before subfolders were kept, use just the file name
+function imageFor(name: string)
+{
+	if(!name.includes('/'))
+		return reading.getImageByName(name);
+
+	for(let i = 0; i <= reading.totalPages(); i++)
+	{
+		const image = reading.getImage(i, false);
+		if(image && image.path.replace(/\\/g, '/').endsWith('/' + name))
+			return image;
+	}
+
+	return false;
+}
+
 // Images are known only once reading has loaded, so the list is built on first use
 function buildItems(): Item[]
 {
@@ -181,7 +198,7 @@ function buildItems(): Item[]
 
 	for(const name in data.pages)
 	{
-		const image = reading.getImageByName(name);
+		const image = imageFor(name);
 		if(!image) continue;
 
 		const page = data.pages[name];

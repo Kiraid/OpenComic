@@ -360,7 +360,10 @@ def natural_key(name):
 
 
 def list_pages(comic):
-    """[(basename, loader)] in file order for a .cbz/.zip or a folder of images."""
+    """[(key, loader)] in file order for a .cbz/.zip or a folder of images.
+
+    The key is the page's path inside the comic ("001/09.jpg"), so chapter
+    folders that reuse file names don't overwrite each other's pages."""
     if os.path.isdir(comic):
         names = sorted((n for n in os.listdir(comic) if os.path.splitext(n)[1].lower() in IMAGE_EXT), key=natural_key)
         return [(n, lambda n=n: open(os.path.join(comic, n), 'rb').read()) for n in names]
@@ -368,7 +371,7 @@ def list_pages(comic):
         z = zipfile.ZipFile(comic)
         infos = [i for i in z.infolist() if not i.is_dir() and os.path.splitext(i.filename)[1].lower() in IMAGE_EXT]
         infos.sort(key=lambda i: natural_key(i.filename))
-        return [(os.path.basename(i.filename), lambda i=i: z.read(i)) for i in infos]
+        return [(i.filename, lambda i=i: z.read(i)) for i in infos]
     sys.exit(f'unsupported comic (use a .cbz/.zip or a folder): {comic}')
 
 

@@ -131,6 +131,14 @@ function comicsInFolder(folder: string, depth = 0): string[]
 	return found.sort((a, b) => a.localeCompare(b, undefined, {numeric: true}));
 }
 
+// A page's sidecar key: its path inside the comic, with / ("001/09.jpg").
+// Just the file name for pages at the top, so chapter folders that reuse
+// names (01.jpg, 02.jpg...) don't overwrite each other.
+function pageKey(comic: string, path: string): string
+{
+	return p.relative(comic, path).split(/[\\/]/).join('/');
+}
+
 async function listPages(path: string): Promise<Page[]>
 {
 	const file = fileManager.file(path);
@@ -143,7 +151,7 @@ async function listPages(path: string): Promise<Page[]>
 			if(entry.folder)
 				await walk(entry.path);
 			else if(!entry.compressed && compatible.image(entry.path))
-				pages.push({name: entry.name, path: entry.path});
+				pages.push({name: pageKey(path, entry.path), path: entry.path});
 		}
 
 	};
