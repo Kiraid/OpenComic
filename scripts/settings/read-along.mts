@@ -47,7 +47,7 @@ function snackbar(text: string): void
 {
 	events.snackbar({
 		key: 'readAlongSettings',
-		text: escape(text),
+		text, // The template escapes it
 		duration: 6,
 		update: true,
 		buttons: [{text: language.buttons.dismiss, function: 'events.closeSnackbar();'}],

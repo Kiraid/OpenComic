@@ -125,6 +125,7 @@ let cloning = ''; // Progress of a voice being made
 
 let server: ChildProcess | null = null;
 let port = 0;
+let voiceServer: Promise<number> | null = null; // Serves custom voice files to the server
 let installing: Promise<void> | null = null;
 let starting: Promise<void> | null = null;
 let idleTimer: ReturnType<typeof setTimeout> | false = false;
@@ -725,7 +726,7 @@ async function request(text: string, voice: string): Promise<Sound>
 	return {wav: wav.buffer.slice(wav.byteOffset, wav.byteOffset + wav.length) as ArrayBuffer, seconds: (wav.length - 44) / (rate * 2)};
 }
 
-// The voice the server is given: a built-in name, or the file a custom voice was saved to
+// The voice the server is given: a built-in name, or a URL to the file a custom voice was saved to
 async function voiceSource(voice: string): Promise<string>
 {
 	if(!voice.startsWith('custom:')) return voice;
@@ -734,11 +735,50 @@ async function voiceSource(voice: string): Promise<string>
 	if(!custom) throw new Error('This custom voice was deleted');
 
 	const file = voiceFile(custom.id);
-	if(fs.existsSync(file)) return file;
 
 	// Made for another model: remake it from its clip
-	await exportVoice(p.join(voicesDir(), custom.clip), file, `Adapting ${custom.name} to this model…`);
-	return file;
+	if(!fs.existsSync(file))
+		await exportVoice(p.join(voicesDir(), custom.clip), file, `Adapting ${custom.name} to this model…`);
+
+	return voiceUrl(file);
+}
+
+// The server takes voices only by URL (http, https or hf), and a voice file is
+// too big to upload with each line, so custom voices are served from localhost
+function voiceUrl(file: string): Promise<string>
+{
+	if(!voiceServer)
+	{
+		voiceServer = new Promise((resolve, reject) => {
+
+			const listener = http.createServer(async(request, response) => {
+
+				const name = decodeURIComponent((request.url || '').slice(1));
+
+				try
+				{
+					if(!/^[\w.-]+\.safetensors$/.test(name)) throw new Error('Not a voice');
+					const path = p.join(voicesDir(), name);
+					const stats = await fsp.stat(path);
+					response.writeHead(200, {'Content-Type': 'application/octet-stream', 'Content-Length': stats.size});
+					fs.createReadStream(path).pipe(response);
+				}
+				catch
+				{
+					response.writeHead(404).end();
+				}
+
+			});
+
+			listener.on('error', reject);
+			listener.listen(0, '127.0.0.1', () => resolve((listener.address() as net.AddressInfo).port));
+
+		});
+
+		voiceServer.catch(() => voiceServer = null);
+	}
+
+	return voiceServer.then(voicePort => `http://127.0.0.1:${voicePort}/${encodeURIComponent(p.basename(file))}`);
 }
 
 function voiceFile(id: string): string
